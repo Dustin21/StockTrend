@@ -11,7 +11,7 @@ options("getSymbols.warning4.0" = FALSE)
 from <- "2002-01-01"
 to <- "2011-12-31"
 
-StockData <- getSymbols("^GSPTSE", src = "yahoo", from = from, to = to, auto.assign = getOption('getSymbols.auto.assign', FALSE))
+StockData <- getSymbols("SBUX", src = "yahoo", from = from, to = to, auto.assign = getOption('getSymbols.auto.assign', FALSE))
 
 
 Close.zoo <- StockData[,6]
@@ -78,4 +78,4 @@ plot_Dat <- train %>%
 		ggplot(aes(x = day, y = close)) + geom_line() +
 		geom_line(data = Predicted, colour = "blue") +
 		geom_line(data = test, colour = "red")
-
+print(plot_Dat)
