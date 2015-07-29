@@ -1,32 +1,46 @@
-library(kernlab)
-library(quantmod)
-library(plyr)
-library(dplyr)
-library(reshape2)
-library(tidyr)
-library(ggplot2)
+# load dependencies
+suppressPackageStartupMessages({
+	library(kernlab)
+	library(quantmod)
+	library(plyr)
+	library(dplyr)
+	library(reshape2)
+	library(tidyr)
+	library(ggplot2)
+	options("getSymbols.warning4.0" = FALSE)
+})
 
-options("getSymbols.warning4.0" = FALSE)
-
+# specify relevant time-frame
 from <- "2012-01-01"
 # to <- "2011-12-31"
 
-StockData <- getSymbols("KO", src = "yahoo", from = from,  auto.assign = getOption('getSymbols.auto.assign', FALSE))
+# load data
+StockData <- getSymbols("^GSPC", src = "yahoo", from = from,  
+		auto.assign = getOption('getSymbols.auto.assign', FALSE))
 
-
+# adjusted closing prices
 Close.zoo <- StockData[,6]
+
+# extract dates
 Dates <- time(Close.zoo)
+
+# extract years from string
 Years <- substr(Dates, 1, 4)
+
+# closing values
 Close <- data.frame(close = as.numeric(Close.zoo))
 
+# sequence of number of days per year 
 countYears <- NULL
 for(i in 1:length(unique(Years))) {
 	count <- 1:table(Years)[[i]]
 	countYears[length(countYears)+1:length(count)] <- count
 }
 
+# construct data.frame of years, days, and closing prices
 Data_byYear <- data.frame(year = as.factor(Years), count = countYears, Close)
 
+# 
 castData <- dcast(Data_byYear, count ~ year) %>%
 		na.omit() %>%
 		select(-count) %>%
