@@ -10,7 +10,7 @@ stockPlot <- function(StockTrend, plot.type = "years", years.back = 1) {
 	forecast <- StockTrend$forecast_set
 	train <- StockTrend$training_set
 	closing.normalised <- data.frame(StockTrend$Closing.normalised, 
-			year.int = as.integer(closing.normalised$year))
+			year.int = as.integer((StockTrend$Closing.normalised)$year))
 
 	if(plot.type == "years") {
 		
