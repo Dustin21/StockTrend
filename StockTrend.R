@@ -14,7 +14,7 @@ stockTrend <- function(ticker = "AAPL", from = "2010-01-01", days_ahead = 100, .
 	})
 	
 	# load data
-	StockData <- getSymbols("^GSPC", src = "yahoo", from = from, warnings = FALSE,
+	StockData <- getSymbols(ticker, src = "yahoo", from = from, warnings = FALSE,
 			auto.assign = getOption('getSymbols.auto.assign', FALSE))
 
 	# adjusted closing prices

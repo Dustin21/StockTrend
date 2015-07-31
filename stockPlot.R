@@ -1,4 +1,4 @@
-stockPlot <- function(StockTrend, plot.type = "years") {
+stockPlot <- function(StockTrend, plot.type = "years", years.back = 1) {
 
 	suppressPackageStartupMessages({
 		require(ggplot2)
@@ -9,11 +9,14 @@ stockPlot <- function(StockTrend, plot.type = "years") {
 	pred <- StockTrend$Predictions
 	forecast <- StockTrend$forecast_set
 	train <- StockTrend$training_set
-	closing.normalised <- StockTrend$Closing.normalised
+	closing.normalised <- data.frame(StockTrend$Closing.normalised, 
+			year.int = as.integer(closing.normalised$year))
 
 	if(plot.type == "years") {
 		
-		stock.years <- ggplot(closing.normalised, aes(x = day, y = close)) +
+		stock.years <- filter(closing.normalised, year.int > 
+					(dim(table(year.int))-years.back)) %>%
+					ggplot(aes(x = day, y = close)) +
 					geom_line(aes(colour = year)) +
 					theme_bw() +
 					ggtitle("Normalised Closing Prices by Year") +
@@ -33,10 +36,14 @@ stockPlot <- function(StockTrend, plot.type = "years") {
 			train.count$year <- as.integer(train.count$year)
 
 			trend.plot <- train.count %>%
-					filter(year > (dim(table(train$year))-year)) %>%
+					filter(year > (dim(table(train$year))-years.back)) %>%
 					ggplot(aes(x = count, y = close)) + geom_line() +
 					geom_line(data = predicted, aes(x = count, y = close),
-							colour = "blue")
+							colour = "blue") +
+					theme_bw() +
+					ggtitle("Stock Trend Forecast") +
+					xlab("nth day in time frame") +
+					ylab("Normalised Closing Price")
 			return(trend.plot)
 
 		} else {
